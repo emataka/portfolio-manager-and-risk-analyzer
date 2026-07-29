@@ -1,22 +1,33 @@
 class Asset:
     def __init__(self, ticker, quantity, buy_price, current_price=None):
         
-        ticker = ticker.upper()
-        self.ticker = ticker
-        
-        if quantity <= 0:
-            raise ValueError("Quantity must be greater than zero.")
-        
-        if buy_price <= 0:
-            raise ValueError("Buy price must be greater than zero.")
-        
-        self.ticker = ticker
+        self.ticker = ticker.upper()
         self.quantity = quantity
         self.buy_price = buy_price
         if current_price is None:
             self.current_price = buy_price
         else:
             self.update_price(current_price)
+    
+    @property
+    def quantity(self):
+        return self._quantity
+    
+    @quantity.setter
+    def quantity(self, value):
+        if value <= 0:
+            raise ValueError("Quantity must be greater than zero.")
+        self._quantity = value
+    
+    @property
+    def buy_price(self):
+        return self._buy_price
+    
+    @buy_price.setter
+    def buy_price(self, value):
+        if value <= 0:
+            raise ValueError("Buy price must be greater than zero.")
+        self._buy_price = value
     
     def cost_basis(self):
         return self.quantity * self.buy_price

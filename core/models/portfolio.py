@@ -1,6 +1,10 @@
-from models.asset import Asset
+from .asset import Asset
+
 
 class Portfolio:
+    HIGH_RISK_THRESHOLD = 70
+    WARNING_THRESHOLD = 50
+    
     def __init__(self):
         self.assets = []
     
@@ -20,7 +24,7 @@ class Portfolio:
     def calculate_cost_basis(self):
         total = 0
         for asset in self.assets:
-            total += asset.quantity * asset.buy_price
+            total += asset.cost_basis()
         return total
     
     def calculate_profit_loss(self):
@@ -41,40 +45,53 @@ class Portfolio:
     def risk_check(self):
         total_value = self.calculate_total_value()
         
-        print("\n--- Risk Analysis ---\n")
-        
-        for asset in self.assets:
-            value = asset.market_value()
-            weight = (value / total_value) * 100 if total_value > 0 else 0
-        
-            if weight > 70:
-                print(f"HIGH RISK: {asset.ticker} = {weight:.2f}%")
-            elif weight > 50:
-                print(f"WARNING: {asset.ticker} = {weight:.2f}%")
-            else:
-                print(f"OK: {asset.ticker} = {weight:.2f}%")
-    
-    def report(self):
-        print("\n--- Portfolio Report ---\n")
-        
-        total_value = self.calculate_total_value()
+        asset_risk = []
         
         for asset in self.assets:
             value = asset.market_value()
             weight = (value / total_value) * 100 if total_value > 0 else 0
             
-            print(
-                f"{asset.ticker} | "
-                f"Qty: {asset.quantity} | "
-                f"Buy: {asset.buy_price} | "
-                f"Current: {asset.current_price:.2f} | "
-                f"Value: {value:.2f} | "
-                f"P/L: {asset.profit_loss():.2f} | "
-                f"Weight: {weight:.2f}%"
-            )
+            if weight > self.HIGH_RISK_THRESHOLD:
+                level = "high"
+            elif weight > self.WARNING_THRESHOLD:
+                level = "warning"
+            else:
+                level = "ok"
+
+            asset_status = {
+                "ticker": asset.ticker,
+                "level": level,
+            }
+            
+            asset_risk.append(asset_status)
         
-        print("\n------------------------")
-        print(f"TOTAL VALUE: {total_value:.2f}")
-        print(f"COST BASIS: {self.calculate_cost_basis():.2f}")
-        print(f"PROFIT/LOSS: {self.calculate_profit_loss():.2f}")
-        print(f"RETURN: {self.calculate_return_percentage():.2f}")
+        return asset_risk
+    
+    def report(self):
+        total_value = self.calculate_total_value()
+        
+        asset_data = []
+        
+        for asset in self.assets:
+            value = asset.market_value()
+            weight = (value / total_value) * 100 if total_value > 0 else 0
+            
+            asset_info = {
+                "ticker": asset.ticker,
+                "quantity": asset.quantity,
+                "buy_price": asset.buy_price,
+                "current_price": asset.current_price,
+                "value": value,
+                "profit_loss": asset.profit_loss(),
+                "weight": weight,
+            }
+        
+            asset_data.append(asset_info)
+        
+        return {
+            "assets":asset_data,
+            "total_value": total_value,
+            "cost_basis": self.calculate_cost_basis(),
+            "profit_loss": self.calculate_profit_loss(),
+            "return_percentage": self.calculate_return_percentage(),
+        }
