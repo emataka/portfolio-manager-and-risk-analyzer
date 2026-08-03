@@ -1,6 +1,6 @@
+from core.data.data_service import MarketDataService
 from core.models.asset import Asset
 from core.models.portfolio import Portfolio
-from core.data.data_service import MarketDataService
 
 
 def print_report(report):
@@ -36,12 +36,13 @@ def main():
     portfolio = Portfolio()
     market_data_service = MarketDataService()
     
-    a1 = Asset("AAPL", 10, 100)
-    a2 = Asset("TSLA", 5, 200)
-    a3 = Asset("NVDA", 20, 150)
-    a4 = Asset("ABC123", 10, 70)
+    a1 = Asset("AAPL", 10, 100, "US")
+    a2 = Asset("TSLA", 5, 200, "US")
+    a3 = Asset("NVDA", 20, 150, "US")
+    a4 = Asset("ABC123", 10, 70, "US")
+    a5 = Asset("وبملت", 100, 5000, "IR")
     
-    for asset in [a1, a2, a3, a4]:
+    for asset in [a1, a2, a3, a4, a5]:
         try:
             portfolio.add_asset(asset)
         except ValueError as e:

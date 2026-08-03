@@ -89,7 +89,7 @@ class Portfolio:
             asset_data.append(asset_info)
         
         return {
-            "assets":asset_data,
+            "assets": asset_data,
             "total_value": total_value,
             "cost_basis": self.calculate_cost_basis(),
             "profit_loss": self.calculate_profit_loss(),

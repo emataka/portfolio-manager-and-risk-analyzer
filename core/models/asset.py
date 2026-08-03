@@ -1,9 +1,10 @@
 class Asset:
-    def __init__(self, ticker, quantity, buy_price, current_price=None):
+    def __init__(self, ticker, quantity, buy_price, market, current_price=None):
         
         self.ticker = ticker.upper()
         self.quantity = quantity
         self.buy_price = buy_price
+        self.market = market.upper()
         if current_price is None:
             self.current_price = buy_price
         else:
@@ -28,6 +29,16 @@ class Asset:
         if value <= 0:
             raise ValueError("Buy price must be greater than zero.")
         self._buy_price = value
+    
+    @property
+    def market(self):
+        return self._market
+    
+    @market.setter
+    def market(self, value):
+        if value not in ["IR", "US"]:
+            raise ValueError(f"Market must be 'US' or 'IR'. Got {value}")
+        self._market = value
     
     def cost_basis(self):
         return self.quantity * self.buy_price
