@@ -13,10 +13,10 @@ class IranMarketProvider(MarketDataProvider):
         
         return stock.last_price
     
-    def get_price_history(self, ticker: str) -> pd.Series:
+    def get_price_history(self, ticker: str, years: int = 1) -> pd.Series:
         try:
             stock = tse.Ticker(ticker)
         except ValueError:
             raise ValueError(f"Ticker '{ticker}' not found.")
         
-        return stock.history.tail(252).set_index('date')['close']
+        return stock.history.tail(252 * years).set_index('date')['close']

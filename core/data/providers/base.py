@@ -8,6 +8,6 @@ class MarketDataProvider(ABC):
         ...
 
     @abstractmethod
-    def get_price_history(self, ticker: str):
-        """Return a pandas Series of daily closing prices, indexed by date, for roughly the past year."""
+    def get_price_history(self, ticker: str, years: int = 1):
+        """Return a pandas Series of daily closing prices, indexed by date, for roughly the past `years` years."""
         ...

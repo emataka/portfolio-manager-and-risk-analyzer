@@ -15,11 +15,11 @@ class MarketDataService:
         else:
             raise ValueError(f"Unknown market: {market}")
     
-    def get_price_history(self, ticker: str, market: str):
+    def get_price_history(self, ticker: str, market: str, years: int = 1):
         if market == "US":
-            return self.us_provider.get_price_history(ticker)
+            return self.us_provider.get_price_history(ticker, years)
         elif market == "IR":
-            return self.ir_provider.get_price_history(ticker)
+            return self.ir_provider.get_price_history(ticker, years)
         else:
             raise ValueError(f"Unknown market: {market}")
     
