@@ -1,10 +1,11 @@
 from cli.questionnaire_cli import run_questionnaire
 from core.data.data_service import MarketDataService
+from core.data.universe import US_TICKERS
 from core.optimization.strategies.max_sharpe import MaxSharpeStrategy
 from core.recommendation.recommendation_engine import RecommendationEngine
 
 RISK_FREE_RATE = 0.05
-TICKERS = ["AAPL", "TSLA", "NVDA"]
+TICKERS = US_TICKERS
 MARKET = "US"
 
 def main():
@@ -25,7 +26,8 @@ def main():
 
 def print_recommendation(recommendation):
     for ticker, weight in recommendation["weights"].items():
-        print(f"  {ticker}: {weight:.1%}")
+        if weight > 0.001:
+            print(f"  {ticker}: {weight:.1%}")
     
     print()
     print(f"بازده مورد انتظار: {recommendation['portfolio_return']:.1%}")

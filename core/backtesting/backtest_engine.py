@@ -72,3 +72,33 @@ def run_rebalancing_backtest(
     
     full_value_series = pd.concat(value_pieces)
     return full_value_series[~full_value_series.index.duplicated(keep="first")]
+
+def run_allocated_backtest(
+    optimization_strategy,
+    price_histories,
+    risky_allocation,
+    risk_free_rate,
+    initial_capital=10000,
+    rebalance_frequency_days=63,
+    lookback_days=252,
+    transaction_cost_rate=0.001,
+):
+    risky_capital = initial_capital * risky_allocation
+    risk_free_capital = initial_capital * (1 - risky_allocation)
+    
+    risky_value = run_rebalancing_backtest(
+        optimization_strategy,
+        price_histories,
+        initial_capital=risky_capital,
+        rebalance_frequency_days=rebalance_frequency_days,
+        lookback_days=lookback_days,
+        transaction_cost_rate=transaction_cost_rate,
+    )
+    
+    daily_rate = (1 + risk_free_rate) ** (1 / 252) - 1
+    risk_free_value = pd.Series(
+        [risk_free_capital * (1 + daily_rate) ** day for day in range(len(risky_value))],
+        index=risky_value.index,
+    )
+    
+    return risky_value + risk_free_value
