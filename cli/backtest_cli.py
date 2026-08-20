@@ -8,12 +8,11 @@ from core.backtesting.performance_metrics import (
     calculate_total_return,
 )
 from core.data.data_service import MarketDataService
-from core.data.universe import US_TICKERS
+from core.data.universe import get_screened_universe
 from core.optimization.strategies.max_sharpe import MaxSharpeStrategy
 from core.recommendation.recommendation_engine import RecommendationEngine
 
 RISK_FREE_RATE = 0.05
-TICKERS = US_TICKERS
 MARKET = "US"
 BACKTEST_YEARS = 3
 
@@ -22,6 +21,7 @@ def main():
     print("به بخش بک تست خوش اومدی!")
     print("\nداریم بررسی میکنیم اگه این پیشنهاد رو رو داده تاریخی دنبال میکردی، چی میشد.\n")
 
+    TICKERS = get_screened_universe(tickers_per_sector=3)
     profile = run_questionnaire()
     print(f"\nدسته ریسک گریزی شما: {profile['category']}")
 
