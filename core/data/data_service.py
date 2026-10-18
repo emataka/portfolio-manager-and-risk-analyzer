@@ -14,6 +14,13 @@ class MarketDataService:
             return self.ir_provider.get_price(ticker)
         else:
             raise ValueError(f"Unknown market: {market}")
+
+    def get_currency(self, market: str) -> str:
+        if market == "US":
+            return self.us_provider.currency
+        if market == "IR":
+            return self.ir_provider.currency
+        raise ValueError(f"Unknown market: {market}")
     
     def get_price_history(self, ticker: str, market: str, years: int = 1):
         if market == "US":
@@ -30,6 +37,12 @@ class MarketDataService:
         
         for asset in portfolio.assets:
             try:
+                provider_currency = self.get_currency(asset.market)
+                if asset.currency != provider_currency:
+                    raise ValueError(
+                        f"Asset currency {asset.currency} does not match "
+                        f"{asset.market} provider currency {provider_currency}."
+                    )
                 new_price = self.get_price(asset.ticker, asset.market)
                 asset.update_price(new_price)
                 updated += 1
@@ -37,6 +50,7 @@ class MarketDataService:
                 failed += 1
                 error = {
                     "ticker": asset.ticker,
+                    "market": asset.market,
                     "error": str(e),
                 }
                 failures.append(error)

@@ -5,6 +5,9 @@ from .base import MarketDataProvider
 
 
 class IranMarketProvider(MarketDataProvider):
+    # pytse-client exposes TSETMC price values in rial-denominated native units.
+    currency = "IRR"
+
     def get_price(self, ticker: str) -> float:
         try:
             stock = tse.Ticker(ticker)

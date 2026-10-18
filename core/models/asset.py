@@ -1,10 +1,14 @@
 class Asset:
-    def __init__(self, ticker, quantity, buy_price, market, current_price=None):
+    MARKET_CURRENCIES = {"US": "USD", "IR": "IRR"}
+
+    def __init__(self, ticker, quantity, buy_price, market, current_price=None, currency=None):
         
         self.ticker = ticker.upper()
         self.quantity = quantity
         self.buy_price = buy_price
         self.market = market.upper()
+        expected_currency = self.MARKET_CURRENCIES[self.market]
+        self.currency = expected_currency if currency is None else currency
         if current_price is None:
             self.current_price = buy_price
         else:
@@ -39,6 +43,22 @@ class Asset:
         if value not in ["IR", "US"]:
             raise ValueError(f"Market must be 'US' or 'IR'. Got {value}")
         self._market = value
+
+    @property
+    def currency(self):
+        return self._currency
+
+    @currency.setter
+    def currency(self, value):
+        if not isinstance(value, str) or len(value) != 3 or not value.isalpha():
+            raise ValueError("Currency must be a three-letter code such as USD or IRR.")
+        value = value.upper()
+        expected_currency = self.MARKET_CURRENCIES[self.market]
+        if value != expected_currency:
+            raise ValueError(
+                f"Market {self.market} quotes prices in {expected_currency}; got {value}."
+            )
+        self._currency = value
     
     def cost_basis(self):
         return self.quantity * self.buy_price

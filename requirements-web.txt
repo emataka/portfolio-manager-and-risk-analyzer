@@ -1,0 +1,6 @@
+# Optional dependencies for the local read-only API.
+# Install the existing project requirements separately when setting up the app.
+fastapi>=0.115,<1.0
+uvicorn>=0.34,<1.0
+SQLAlchemy>=2.0,<3.0
+alembic>=1.14,<2.0

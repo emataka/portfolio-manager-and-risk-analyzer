@@ -1,0 +1,3 @@
+# TestClient transport required by the currently supported Starlette release.
+# Install the project and API requirements separately before running the suite.
+httpx2>=2.0.0

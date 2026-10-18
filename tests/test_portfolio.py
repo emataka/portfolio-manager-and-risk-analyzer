@@ -88,3 +88,31 @@ def test_report_structure():
     assert result["profit_loss"] == 500
     assert result["return_percentage"] == 50
     assert result["assets"][0]["ticker"] == "AAPL"
+
+def test_mixed_currency_report_keeps_currency_amounts_separate():
+    portfolio = Portfolio()
+    portfolio.add_asset(Asset("AAPL", 10, 100, "US", current_price=150))
+    portfolio.add_asset(Asset("وبملت", 2, 5000, "IR", current_price=4000))
+
+    result = portfolio.report()
+
+    assert result["total_value"] is None
+    assert result["cost_basis"] is None
+    assert result["currencies"]["USD"]["total_value"] == 1500
+    assert result["currencies"]["USD"]["cost_basis"] == 1000
+    assert result["currencies"]["USD"]["profit_loss"] == 500
+    assert result["currencies"]["USD"]["unrealized_return_percentage"] == 50
+    assert result["currencies"]["IRR"]["total_value"] == 8000
+    assert result["currencies"]["IRR"]["cost_basis"] == 10000
+    assert result["currencies"]["IRR"]["profit_loss"] == -2000
+    assert result["currencies"]["IRR"]["unrealized_return_percentage"] == -20
+    assert result["assets"][0]["currency_weight"] == 100
+    assert result["assets"][1]["currency_weight"] == 100
+
+def test_scalar_total_rejects_mixed_currency_amounts():
+    portfolio = Portfolio()
+    portfolio.add_asset(Asset("AAPL", 1, 100, "US"))
+    portfolio.add_asset(Asset("وبملت", 1, 5000, "IR"))
+
+    with pytest.raises(ValueError, match="across currencies"):
+        portfolio.calculate_total_value()
